@@ -1,0 +1,18 @@
+---
+version: "2"
+
+services:
+  registry_init:
+    build: "docker/registry_init"
+    network_mode: "host"
+    restart: "no"
+    env_file: "./config.env"
+    depends_on:
+      - registry
+  registry:
+    image: "registry:2"
+    network_mode: "host"
+    restart: "always"
+    ports:
+      - "5000:5000"
+  

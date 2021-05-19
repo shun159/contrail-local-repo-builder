@@ -10,7 +10,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use structopt::StructOpt;
 
-static CONN_TIMEOUT: u64 = 180;
+static CONN_TIMEOUT: u64 = 300;
 
 #[derive(Debug, StructOpt, Clone, Default)]
 struct CommandOptions {
@@ -20,8 +20,8 @@ struct CommandOptions {
     password: String,
     #[structopt(long, default_value = "localhost:2375")]
     registry: String,
-    #[structopt(short, default_value = "1")]
-    n_threads: i32,
+    #[structopt(long, default_value = "localhost:2375")]
+    registry_name: String,
     #[structopt(short, long, default_value = "example/sample.txt")]
     targets: String,
 }
@@ -43,17 +43,17 @@ async fn main() {
             "Downloading({}/{})..... {}:{}",
             tmp_len, targets_len, target.name, target.tag
         );
-        pull_image(target, &docker).await.unwrap();
+        let _res = pull_image(target, &docker).await;
         println!(
             "Tagging({}/{})..... {}:{}",
             tmp_len, targets_len, target.name, target.tag
         );
-        tag_image(target, &docker).await.unwrap();
+        let _res = tag_image(target, &docker).await;
         println!(
             "Uploading({}/{})..... {}:{}",
             tmp_len, targets_len, target.name, target.tag
         );
-        push_image(target, &docker).await.unwrap();
+        let _res = push_image(target, &docker).await;
         println!("Complete!");
         tmp_len += 1;
     }
@@ -92,7 +92,8 @@ async fn tag_image(
     docker: &Docker,
 ) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let options = CommandOptions::from_args();
-    let repo_name = format!("{}/{}:{}", options.registry, target.name, target.tag);
+    let name = target.name.clone().replace("hub.juniper.net/", "");
+    let repo_name = format!("{}/{}:{}", options.registry_name, name, target.tag);
     let img_name = format!("{}:{}", target.name, target.tag);
     let tag_opt = TagImageOptions {
         tag: target.tag.clone(),
@@ -107,7 +108,8 @@ async fn push_image(
     docker: &Docker,
 ) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let options = CommandOptions::from_args();
-    let img_name = format!("{}/{}:{}", options.registry, target.name, target.tag);
+    let name = target.name.clone().replace("hub.juniper.net/", "");
+    let img_name = format!("{}/{}:{}", options.registry_name, name, target.tag);
     let push_opts = PushImageOptions {
         tag: target.tag.clone(),
         ..Default::default()
