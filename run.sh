@@ -13,6 +13,7 @@ if [ "$PLATFORM" = "\"CentOS Linux\"" ]; then
 ExecStart=
 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock -H fd:// -H tcp://0.0.0.0:2375
 EOS
+  mkdir -p /etc/docker
   if [ ! -f "/etc/docker/daemon.json" ]; then
     echo "{ \"insecure-registries\": [\"$(hostname):5000\"] }" > /etc/docker/daemon.json
   fi
