@@ -92,9 +92,10 @@ async fn tag_image(
     docker: &Docker,
 ) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let options = CommandOptions::from_args();
-    let name = target.name.clone().replace("hub.juniper.net/", "");
+    let name = target.name.clone().replace("hub.juniper.net/contrail/", "");
     let repo_name = format!("{}/{}:{}", options.registry_name, name, target.tag);
     let img_name = format!("{}:{}", target.name, target.tag);
+    println!("name: {}, image: {}", repo_name, img_name);
     let tag_opt = TagImageOptions {
         tag: target.tag.clone(),
         repo: repo_name,
@@ -108,7 +109,7 @@ async fn push_image(
     docker: &Docker,
 ) -> Result<(), Box<dyn std::error::Error + 'static>> {
     let options = CommandOptions::from_args();
-    let name = target.name.clone().replace("hub.juniper.net/", "");
+    let name = target.name.clone().replace("hub.juniper.net/contrail/", "");
     let img_name = format!("{}/{}:{}", options.registry_name, name, target.tag);
     let push_opts = PushImageOptions {
         tag: target.tag.clone(),

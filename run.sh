@@ -4,7 +4,7 @@ PLATFORM=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 
 # Install Docker
 if [ "$PLATFORM" = "\"CentOS Linux\"" ]; then
-  yum install -y yum-utils device-mapper-persistent-date lvm2
+  yum install -y yum-utils device-mapper-persistent-data lvm2
   yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   yum install -y docker-ce docker-ce-cli containerd.io
   mkdir -p /usr/lib/systemd/system/docker.service.d
