@@ -4,6 +4,11 @@ PLATFORM=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 
 # Install Docker
 if [ "$PLATFORM" = "\"CentOS Linux\"" ]; then
+  openssl req -x509 -nodes -days 3650\
+              -newkey rsa:2048\
+              -keyout /etc/pki/tls/certs/apache.key \
+              -out /etc/pki/tls/certs/apache.crt \
+              -subj "/CN=$(hostname --fqdn)"
   yum install -y yum-utils device-mapper-persistent-data lvm2
   yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   yum install -y docker-ce docker-ce-cli containerd.io

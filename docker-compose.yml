@@ -13,6 +13,11 @@ services:
     image: "registry:2"
     network_mode: "host"
     restart: "always"
+    volumes:
+      - /var/tmp/auth:/auth
+      - /etc/pki/tls/certs:/certs
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/apache.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/apache.key
     ports:
       - "5000:5000"
-  
