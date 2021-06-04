@@ -1,5 +1,8 @@
 ---
-version: "2"
+version: "3.2"
+
+volumes:
+   yum-volume:
 
 services:
   registry_init:
@@ -21,3 +24,41 @@ services:
       REGISTRY_HTTP_TLS_KEY: /certs/apache.key
     ports:
       - "5000:5000"
+  apache:
+    build: "docker/apache"
+    restart: "always"
+    network_mode: "host"
+    volumes:
+      - type: volume
+        source: yum-volume
+        target: /var/www/html
+      - type: bind
+        source: /etc/pki/tls/certs/pypi.python.org.crt
+        target: /usr/local/apache2/conf/pypi.python.org.crt
+      - type: bind
+        source: /etc/pki/tls/certs/pypi.python.org.key
+        target: /usr/local/apache2/conf/pypi.python.org.key
+      - type: bind
+        source: /etc/pki/tls/certs/download.docker.com.crt
+        target: /usr/local/apache2/conf/download.docker.com.crt
+      - type: bind
+        source: /etc/pki/tls/certs/download.docker.com.key
+        target: /usr/local/apache2/conf/download.docker.com.key
+      - type: bind
+        source: /etc/pki/tls/certs/dl.fedoraproject.org.crt
+        target: /usr/local/apache2/conf/dl.fedoraproject.org.crt
+      - type: bind
+        source: /etc/pki/tls/certs/dl.fedoraproject.org.key
+        target: /usr/local/apache2/conf/dl.fedoraproject.org.key
+      - type: bind
+        source: /etc/pki/tls/certs/apache.crt
+        target: /usr/local/apache2/conf/server.crt
+      - type: bind
+        source: /etc/pki/tls/certs/apache.key
+        target: /usr/local/apache2/conf/server.key
+      - type: bind
+        source: ${PWD}/docker/apache/conf/httpd.conf
+        target: /usr/local/apache2/conf/httpd.conf
+      - type: bind
+        source: ${PWD}/docker/apache/conf/extra/httpd-ssl.conf
+        target: /usr/local/apache2/conf/extra/httpd-ssl.conf

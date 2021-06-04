@@ -30,4 +30,7 @@ EOS
   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 fi
 
-docker-compose up
+SERVERNAME="$(awk -F'=' '{ if($0 ~ /DOCKER_REGISTRY_NAME/) print C$2  }' config.env | sed -e 's/:.*//')"
+cp -pr docker/apache/httpd-ssl.conf docker/apache/httpd-ssl-new.conf
+sed -i -e "s/^ servername myregistry\.local/ servername ${SERVERNAME}/" docker/apache/httpd-ssl-new.conf
+docker-compose up apache
